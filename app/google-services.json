@@ -1,0 +1,68 @@
+{
+  "project_info": {
+    "project_number": "420177308914",
+    "project_id": "tugasakhir-naufal",
+    "storage_bucket": "tugasakhir-naufal.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:420177308914:android:74cab4758ce8b3fdb2346b",
+        "android_client_info": {
+          "package_name": "com.naufalphew.appta"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "420177308914-c1puv116m8c6senj60i56uaka2h8napu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAgRtsfGHAENVPP5oANh3FYqzH_IX_UTm8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "420177308914-c1puv116m8c6senj60i56uaka2h8napu.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:420177308914:android:24bc20ad7539d24fb2346b",
+        "android_client_info": {
+          "package_name": "id.naufalfajar.go"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "420177308914-c1puv116m8c6senj60i56uaka2h8napu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAgRtsfGHAENVPP5oANh3FYqzH_IX_UTm8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "420177308914-c1puv116m8c6senj60i56uaka2h8napu.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
