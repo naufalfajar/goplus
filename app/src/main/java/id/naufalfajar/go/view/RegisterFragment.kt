@@ -12,10 +12,10 @@ import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import id.naufalfajar.go.databinding.FragmentLoginBinding
+import id.naufalfajar.go.databinding.FragmentRegisterBinding
 
-class LoginFragment : Fragment() {
-    private var _binding: FragmentLoginBinding? = null
+class RegisterFragment : Fragment() {
+    private var _binding: FragmentRegisterBinding? = null
     private val binding get() = _binding!!
     private lateinit var auth: FirebaseAuth
 
@@ -23,14 +23,8 @@ class LoginFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentLoginBinding.inflate(layoutInflater, container, false)
+        _binding = FragmentRegisterBinding.inflate(layoutInflater, container, false)
         return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        moveToSignUp()
-        loginAuth()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,17 +33,10 @@ class LoginFragment : Fragment() {
         auth = Firebase.auth
     }
 
-    override fun onStart() {
-        super.onStart()
-        // Check if user is signed in (non-null) and update UI accordingly.
-        val currentUser = auth.currentUser
-        if(currentUser != null){
-            reload()
-        }
-    }
-
-    private fun reload(){
-        findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToHomeFragment())
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        moveToSignIn()
+        registerAuth()
     }
 
     override fun onDestroy() {
@@ -57,33 +44,35 @@ class LoginFragment : Fragment() {
         _binding = null
     }
 
-    private fun moveToSignUp(){
-        binding.signUp.setOnClickListener {
-            findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToRegisterFragment())
+    private fun moveToSignIn(){
+        binding.signIn.setOnClickListener {
+            findNavController().navigate(RegisterFragmentDirections.actionRegisterFragmentToLoginFragment())
         }
     }
 
-    private fun loginAuth(){
+    private fun registerAuth(){
         binding.apply {
-            mbtnLogin.setOnClickListener {
+            mbtnRegister.setOnClickListener {
                 val etEmail = binding.etEmail.text.toString()
                 val etPassword = binding.etPassword.text.toString()
+                val etConfirmPass = binding.etPasswordConfirmation.text.toString()
+                val isEqual = (etConfirmPass == etPassword)
 
-                if(inputValidated(etEmail,etPassword)){
-                   Toast.makeText(requireContext(),"Please fill all the fields", Toast.LENGTH_SHORT).show()
+                if(inputValidated(etEmail, etPassword, etConfirmPass, isEqual)){
+                    Toast.makeText(requireContext(),"Please check and fill all the fields", Toast.LENGTH_SHORT).show()
                 }
                 else{
-                    auth.signInWithEmailAndPassword(etEmail, etPassword)
+                    auth.createUserWithEmailAndPassword(etEmail, etPassword)
                         .addOnCompleteListener(requireActivity()) { task ->
                             if (task.isSuccessful) {
                                 // Sign in success, update UI with the signed-in user's information
-                                Log.d(TAG, "signInWithEmail:success")
-                                Toast.makeText(requireContext(), "Login Success.",
+                                Log.d(TAG, "createUserWithEmail:success")
+                                Toast.makeText(requireContext(), "Register success.",
                                     Toast.LENGTH_SHORT).show()
-                                findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToHomeFragment())
+                                findNavController().navigate(RegisterFragmentDirections.actionRegisterFragmentToLoginFragment())
                             } else {
                                 // If sign in fails, display a message to the user.
-                                Log.w(TAG, "signInWithEmail:failure", task.exception)
+                                Log.w(TAG, "createUserWithEmail:failure", task.exception)
                                 Toast.makeText(requireContext(), "Authentication failed.",
                                     Toast.LENGTH_SHORT).show()
                             }
@@ -93,7 +82,7 @@ class LoginFragment : Fragment() {
         }
     }
 
-    private fun inputValidated(etEmail: String, etPassword: String) : Boolean{
-        return (etEmail.isEmpty()||etPassword.isEmpty())
+    private fun inputValidated(etEmail: String, etPassword: String, etConfirmPass: String, isEqual: Boolean) : Boolean{
+        return (etEmail.isEmpty()||etPassword.isEmpty()||etConfirmPass.isEmpty()||!isEqual)
     }
 }
