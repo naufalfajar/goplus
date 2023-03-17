@@ -10,8 +10,6 @@ class MainActivity : AppCompatActivity() {
     private val binding get() = _binding!!
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        val splashScreen = installSplashScreen()
-
         super.onCreate(savedInstanceState)
         _binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)

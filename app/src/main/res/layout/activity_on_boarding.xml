@@ -6,4 +6,12 @@
     android:layout_height="match_parent"
     tools:context=".view.onboarding.OnBoardingActivity">
 
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/fragmentContainerView3"
+        android:name="androidx.navigation.fragment.NavHostFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:defaultNavHost="true"
+        app:navGraph="@navigation/nav_onboarding" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -11,6 +11,7 @@
     <color name="its_blue">#083c84</color>
     <color name="its_yellow">#F1C40F</color>
     <color name="its_grey">#809CC0</color>
+    <color name="its_go_text">#DEFCF9</color>
     <color name="its_white">#F5F5F5</color>
     <color name="tv_grey">#979797</color>
 </resources>

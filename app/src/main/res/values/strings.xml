@@ -13,4 +13,11 @@
     <string name="register">Register</string>
     <string name="do_you_have_an_account">Do you have an account?</string>
     <string name="sign_in">Sign In</string>
+    <string name="btn_continue">Continue</string>
+    <string name="first_screen_content">Go+ merupakan sebuah aplikasi penunjuk jalan yang membantu anda untuk sampai di lokasi tujuan dengan berbagai macam fitur unik yang ada di dalamnya.</string>
+    <string name="second_screen_content">Go+ dapat memberikan referensi tempat yang dapat membantu anda untuk lebih mengenal tempat tempat yang ada di dalam ITS.</string>
+    <string name="btn_register">Register</string>
+    <string name="btn_login">Login</string>
+    <string name="web_client_id">420177308914-m4qvqdibcen24b80hc883vamg84ucl5f.apps.googleusercontent.com</string>
+    <string name="or">Or</string>
 </resources>

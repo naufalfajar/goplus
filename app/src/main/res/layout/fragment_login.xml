@@ -93,6 +93,50 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_forgot_password"/>
+    <!--or-->
+    <LinearLayout
+        android:id="@+id/ll_or_option"
+        android:layout_width="310dp"
+        android:layout_height="20dp"
+        android:layout_marginTop="20dp"
+        android:orientation="horizontal"
+        android:weightSum="3"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/mbtn_login">
+        <View
+            android:layout_width="40dp"
+            android:layout_height="1dp"
+            android:layout_weight="1.4"
+            android:layout_gravity="center"
+            android:background="@color/its_grey"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.2"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:textSize="12sp"
+            android:textColor="@color/its_grey"
+            android:text="@string/or"/>
+
+        <View
+            android:layout_width="40dp"
+            android:layout_height="1dp"
+            android:layout_weight="1.4"
+            android:layout_gravity="center"
+            android:background="@color/its_grey"/>
+    </LinearLayout>
+    <com.google.android.gms.common.SignInButton
+        android:id="@+id/btn_google_sign_in"
+        android:layout_width="310dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="20dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/ll_or_option"/>
+
     <!--ll_dont_have_acc-->
     <LinearLayout
         android:id="@+id/ll_dont_have_acc"
@@ -102,7 +146,7 @@
         android:weightSum="2"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/mbtn_login">
+        app:layout_constraintTop_toBottomOf="@id/btn_google_sign_in">
 
         <TextView
             android:id="@+id/tv_dont_have_acc"

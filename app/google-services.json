@@ -14,7 +14,7 @@
       },
       "oauth_client": [
         {
-          "client_id": "420177308914-c1puv116m8c6senj60i56uaka2h8napu.apps.googleusercontent.com",
+          "client_id": "420177308914-m4qvqdibcen24b80hc883vamg84ucl5f.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
@@ -43,7 +43,15 @@
       },
       "oauth_client": [
         {
-          "client_id": "420177308914-c1puv116m8c6senj60i56uaka2h8napu.apps.googleusercontent.com",
+          "client_id": "420177308914-1b0v31fr84hpsnaj2m3rbsi9ho4sdj6k.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "id.naufalfajar.go",
+            "certificate_hash": "64b549afbfe9809ef948b4fbbb4561dfdc240a59"
+          }
+        },
+        {
+          "client_id": "420177308914-m4qvqdibcen24b80hc883vamg84ucl5f.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
