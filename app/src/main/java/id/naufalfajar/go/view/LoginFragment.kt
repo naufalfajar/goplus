@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.Identity
@@ -46,6 +47,7 @@ class LoginFragment : Fragment() {
         oneTapUI()
         moveToSignUp()
         loginAuth()
+        resetPassword()
     }
 
     private fun googleSignInRequest(){
@@ -197,6 +199,14 @@ class LoginFragment : Fragment() {
                             }
                         }
                 }
+            }
+        }
+    }
+
+    private fun resetPassword(){
+        binding.apply {
+            tvForgotPassword.setOnClickListener {
+                    findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToForgotPasswordFragment())
             }
         }
     }
