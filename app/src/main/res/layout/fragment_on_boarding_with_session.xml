@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/its_blue">
+
+    <ImageView
+        android:id="@+id/imageView4"
+        android:layout_width="412dp"
+        android:layout_height="328dp"
+        app:srcCompat="@mipmap/save_earth"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="400dp" />
+
+    <ImageView
+        android:id="@+id/imageView6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@mipmap/logo"
+        tools:layout_editor_absoluteX="169dp"
+        tools:layout_editor_absoluteY="16dp" />
+
+    <TextView
+        android:id="@+id/titleview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/poppins_bold"
+        android:text="Mari keliling ITS dengan kami"
+        android:textAlignment="center"
+        android:textAppearance="@style/TextAppearance.AppCompat.Display3"
+        android:textColor="@color/its_white"
+        android:textSize="34sp"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="189dp" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="345dp"
+        android:layout_height="34dp"
+        android:fontFamily="@font/poppins"
+        android:text="Semoga, anda dapat membantu teman teman disabilitas dengan aplikasi ini. cheers 👋👋"
+        android:textAlignment="center"
+        android:textColor="@color/its_white"
+        android:textSize="11sp"
+        tools:layout_editor_absoluteX="33dp"
+        tools:layout_editor_absoluteY="308dp" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/mbtn_login2"
+        android:layout_width="310dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="30dp"
+        android:backgroundTint="@color/its_yellow"
+        android:fontFamily="@font/poppins_semibold"
+        android:text="Explore"
+        android:textAllCaps="false"
+        android:textColor="@color/its_blue"
+        android:textStyle="bold"
+        app:cornerRadius="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textView" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
