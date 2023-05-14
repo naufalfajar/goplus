@@ -35,16 +35,40 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val user = Firebase.auth.currentUser
-
-        if(user==null)
-            Toast.makeText(requireContext(), "getdata", Toast.LENGTH_SHORT).show()
-        else
-            binding.namaemail.text = user.email
+        getUsername()
+        moveToGoPlus()
+        moveToHistory()
+        moveToSchedule()
 
         binding.mbtnLogout.setOnClickListener {
             Firebase.auth.signOut()
             findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToLoginFragment())
+        }
+    }
+
+    private fun getUsername(){
+        val user = Firebase.auth.currentUser
+        if(user==null)
+            Toast.makeText(requireContext(), "getdata", Toast.LENGTH_SHORT).show()
+        else
+            binding.namaemail.text = user.email
+    }
+
+    private fun moveToGoPlus(){
+        binding.cvGoPlus.setOnClickListener {
+            findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToGoPlusFragment())
+        }
+    }
+
+    private fun moveToHistory(){
+        binding.cvHistory.setOnClickListener {
+            findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToHistoryFragment())
+        }
+    }
+
+    private fun moveToSchedule(){
+        binding.cvSchedule.setOnClickListener {
+            findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToScheduleFragment())
         }
     }
 }

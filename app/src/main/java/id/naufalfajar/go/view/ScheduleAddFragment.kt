@@ -10,31 +10,29 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.navigation.fragment.findNavController
 import id.naufalfajar.go.R
-import id.naufalfajar.go.databinding.FragmentHistoryBinding
+import id.naufalfajar.go.databinding.FragmentScheduleAddBinding
 
-class HistoryFragment : Fragment() {
-    private var _binding: FragmentHistoryBinding? = null
+class ScheduleAddFragment : Fragment() {
+    private var _binding: FragmentScheduleAddBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
-        // Inflate the layout for this fragment
-        _binding = FragmentHistoryBinding.inflate(layoutInflater, container, false)
+    ): View? {
+        _binding = FragmentScheduleAddBinding.inflate(layoutInflater, container, false)
         return binding.root
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        _binding = null
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         changeStatusBarColor(true)
         onBack()
-        moveToGoPlus()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
     }
 
     private fun onBack(){
@@ -54,12 +52,6 @@ class HistoryFragment : Fragment() {
                 window.statusBarColor = requireActivity().getColor(R.color.its_white)
             else
                 window.statusBarColor = requireActivity().getColor(R.color.its_blue)
-        }
-    }
-
-    private fun moveToGoPlus(){
-        binding.mbtnGo.setOnClickListener {
-            findNavController().navigate(HistoryFragmentDirections.actionHistoryFragmentToGoPlusFragment())
         }
     }
 }

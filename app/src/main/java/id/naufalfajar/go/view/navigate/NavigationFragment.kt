@@ -1,4 +1,4 @@
-package id.naufalfajar.go.view
+package id.naufalfajar.go.view.navigate
 
 import android.annotation.SuppressLint
 import android.os.Build
@@ -10,19 +10,25 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.navigation.fragment.findNavController
 import id.naufalfajar.go.R
-import id.naufalfajar.go.databinding.FragmentHistoryBinding
+import id.naufalfajar.go.databinding.FragmentNavigationBinding
 
-class HistoryFragment : Fragment() {
-    private var _binding: FragmentHistoryBinding? = null
+class NavigationFragment : Fragment() {
+    private var _binding: FragmentNavigationBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
+    ): View? {
         // Inflate the layout for this fragment
-        _binding = FragmentHistoryBinding.inflate(layoutInflater, container, false)
+        _binding = FragmentNavigationBinding.inflate(layoutInflater, container, false)
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        changeStatusBarColor(false)
+        onBack()
     }
 
     override fun onDestroy() {
@@ -30,16 +36,9 @@ class HistoryFragment : Fragment() {
         _binding = null
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        changeStatusBarColor(true)
-        onBack()
-        moveToGoPlus()
-    }
-
     private fun onBack(){
         binding.materialToolbar.setNavigationOnClickListener {
-            changeStatusBarColor(false)
+            changeStatusBarColor(true)
             findNavController().popBackStack()
         }
     }
@@ -54,12 +53,6 @@ class HistoryFragment : Fragment() {
                 window.statusBarColor = requireActivity().getColor(R.color.its_white)
             else
                 window.statusBarColor = requireActivity().getColor(R.color.its_blue)
-        }
-    }
-
-    private fun moveToGoPlus(){
-        binding.mbtnGo.setOnClickListener {
-            findNavController().navigate(HistoryFragmentDirections.actionHistoryFragmentToGoPlusFragment())
         }
     }
 }
