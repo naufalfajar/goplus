@@ -43,10 +43,60 @@
             app:destination="@id/loginFragment"
             app:popUpTo="@id/homeFragment"
             app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_homeFragment_to_goPlusFragment"
+            app:destination="@id/goPlusFragment"
+            app:enterAnim="@anim/nav_default_pop_enter_anim" />
+        <action
+            android:id="@+id/action_homeFragment_to_historyFragment"
+            app:destination="@id/historyFragment"
+            app:enterAnim="@anim/nav_default_pop_enter_anim" />
+        <action
+            android:id="@+id/action_homeFragment_to_scheduleFragment"
+            app:destination="@id/scheduleFragment"
+            app:enterAnim="@anim/nav_default_pop_enter_anim" />
     </fragment>
     <fragment
         android:id="@+id/forgotPasswordFragment"
         android:name="id.naufalfajar.go.view.ForgotPasswordFragment"
         android:label="fragment_forgot_password"
         tools:layout="@layout/fragment_forgot_password" />
+    <fragment
+        android:id="@+id/goPlusFragment"
+        android:name="id.naufalfajar.go.view.GoPlusFragment"
+        android:label="fragment_go_plus"
+        tools:layout="@layout/fragment_go_plus" >
+        <action
+            android:id="@+id/action_goPlusFragment_to_navigationFragment"
+            app:destination="@id/navigationFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/historyFragment"
+        android:name="id.naufalfajar.go.view.HistoryFragment"
+        android:label="fragment_history"
+        tools:layout="@layout/fragment_history" >
+        <action
+            android:id="@+id/action_historyFragment_to_goPlusFragment"
+            app:destination="@id/goPlusFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/scheduleFragment"
+        android:name="id.naufalfajar.go.view.ScheduleFragment"
+        android:label="fragment_schedule"
+        tools:layout="@layout/fragment_schedule" >
+        <action
+            android:id="@+id/action_scheduleFragment_to_scheduleAddFragment"
+            app:destination="@id/scheduleAddFragment"
+            app:enterAnim="@android:anim/slide_in_left" />
+    </fragment>
+    <fragment
+        android:id="@+id/scheduleAddFragment"
+        android:name="id.naufalfajar.go.view.ScheduleAddFragment"
+        android:label="fragment_schedule_add"
+        tools:layout="@layout/fragment_schedule_add" />
+    <fragment
+        android:id="@+id/navigationFragment"
+        android:name="id.naufalfajar.go.view.navigate.NavigationFragment"
+        android:label="fragment_navigation"
+        tools:layout="@layout/fragment_navigation" />
 </navigation>
