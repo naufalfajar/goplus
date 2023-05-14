@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Theme.Go" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <style name="Theme.Go" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/its_blue</item>
         <item name="colorPrimaryVariant">@color/its_blue</item>

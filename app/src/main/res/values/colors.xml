@@ -13,5 +13,7 @@
     <color name="its_grey">#809CC0</color>
     <color name="its_go_text">#DEFCF9</color>
     <color name="its_white">#F5F5F5</color>
+    <color name="its_second_blue">#C0D6F2</color>
     <color name="tv_grey">#979797</color>
+    <color name="nav_grey">#D9D9D9</color>
 </resources>
