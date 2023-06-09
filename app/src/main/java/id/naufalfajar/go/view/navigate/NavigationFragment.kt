@@ -8,18 +8,41 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.fragment.findNavController
+import com.mapbox.navigation.base.options.NavigationOptions
+import com.mapbox.navigation.core.lifecycle.MapboxNavigationApp
 import id.naufalfajar.go.R
 import id.naufalfajar.go.databinding.FragmentNavigationBinding
 
 class NavigationFragment : Fragment() {
     private var _binding: FragmentNavigationBinding? = null
     private val binding get() = _binding!!
-
+//    init {
+//        lifecycle.addObserver(object : DefaultLifecycleObserver {
+//            override fun onResume(owner: LifecycleOwner) {
+//                MapboxNavigationApp.attach(owner)
+//            }
+//
+//            override fun onPause(owner: LifecycleOwner) {
+//                MapboxNavigationApp.detach(owner)
+//            }
+//        })
+//    }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+//        if (!MapboxNavigationApp.isSetup()) {
+//            MapboxNavigationApp.setup {
+//                NavigationOptions.Builder(requireContext())
+//                    .accessToken(R.string.mapbox_access_token.toString())
+//                    .build()
+//            }
+//            MapboxNavigationApp.attach(lifecycleOwner = this)
+//        }
         // Inflate the layout for this fragment
         _binding = FragmentNavigationBinding.inflate(layoutInflater, container, false)
         return binding.root
@@ -28,6 +51,7 @@ class NavigationFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         changeStatusBarColor(false)
+        moveToCamera()
         onBack()
     }
 
@@ -40,6 +64,12 @@ class NavigationFragment : Fragment() {
         binding.materialToolbar.setNavigationOnClickListener {
             changeStatusBarColor(true)
             findNavController().popBackStack()
+        }
+    }
+
+    private fun moveToCamera(){
+        binding.btnCamera.setOnClickListener {
+           findNavController().navigate(NavigationFragmentDirections.actionNavigationFragmentToDetectionFragment())
         }
     }
 

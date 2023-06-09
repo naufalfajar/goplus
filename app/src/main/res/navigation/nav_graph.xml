@@ -98,5 +98,14 @@
         android:id="@+id/navigationFragment"
         android:name="id.naufalfajar.go.view.navigate.NavigationFragment"
         android:label="fragment_navigation"
-        tools:layout="@layout/fragment_navigation" />
+        tools:layout="@layout/fragment_navigation" >
+        <action
+            android:id="@+id/action_navigationFragment_to_detectionFragment"
+            app:destination="@id/detectionFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/detectionFragment"
+        android:name="id.naufalfajar.go.view.detection.DetectionFragment"
+        android:label="fragment_detection"
+        tools:layout="@layout/fragment_detection" />
 </navigation>

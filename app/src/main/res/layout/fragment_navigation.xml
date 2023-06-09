@@ -101,8 +101,9 @@
         app:layout_constraintEnd_toEndOf="parent"/>
 
     <androidx.cardview.widget.CardView
+        android:id="@+id/switch_btn"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="85dp"
         android:layout_margin="32dp"
         app:cardCornerRadius="10dp"
         app:layout_constraintStart_toStartOf="parent"
@@ -142,6 +143,7 @@
                 android:layout_gravity="center"/>
 
             <androidx.cardview.widget.CardView
+                android:id="@+id/btn_camera"
                 android:layout_width="54dp"
                 android:layout_height="54dp"
                 android:backgroundTint="@color/its_yellow"
