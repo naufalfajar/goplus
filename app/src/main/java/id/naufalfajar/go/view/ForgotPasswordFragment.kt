@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.navigation.findNavController
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -58,6 +59,9 @@ class ForgotPasswordFragment : Fragment() {
                         .addOnCompleteListener { task ->
                             if (task.isSuccessful) {
                                 Log.d(TAG, "Email verification sent.")
+                                Toast.makeText(requireContext(), "Email konfirmasi reset password berhasil dikirim",
+                                    Toast.LENGTH_SHORT).show()
+                                it.findNavController().popBackStack()
                             }else {
                                 // If sign in fails, display a message to the user.
                                 Log.w(TAG, "Verification failed.", task.exception)

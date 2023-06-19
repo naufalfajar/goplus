@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.Identity
@@ -22,6 +23,8 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import id.naufalfajar.go.R
 import id.naufalfajar.go.databinding.FragmentLoginBinding
+import id.naufalfajar.go.helper.DataStoreManager
+import kotlinx.coroutines.launch
 
 class LoginFragment : Fragment() {
     private var _binding: FragmentLoginBinding? = null
@@ -31,6 +34,7 @@ class LoginFragment : Fragment() {
     private var showOneTapUI = true
     private lateinit var oneTapClient: SignInClient
     private lateinit var signInRequest: BeginSignInRequest
+    private lateinit var preferenceManager: DataStoreManager
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -144,6 +148,7 @@ class LoginFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        preferenceManager = DataStoreManager(requireContext())
         // Initialize Firebase Auth
         auth = Firebase.auth
     }
@@ -154,11 +159,25 @@ class LoginFragment : Fragment() {
         val currentUser = auth.currentUser
         if(currentUser != null){
             reload()
+//            findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToHomeFragment())
+//            findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
         }
     }
 
     private fun reload(){
-        findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToHomeFragment())
+        lifecycleScope.launch {
+            preferenceManager.isFirstTimeUser.collect { isFirstTime ->
+                if (isFirstTime) {
+                    // Lakukan sesuatu untuk pengguna baru
+                    // Navigasikan ke halaman onboarding
+                    findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToThirdScreen())
+                } else {
+                    // Pengguna bukan pengguna baru
+                    // Navigasikan ke halaman berikutnya setelah onboarding
+                    findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToHomeFragment())
+                }
+            }
+        }
     }
 
     override fun onDestroy() {
@@ -189,7 +208,8 @@ class LoginFragment : Fragment() {
                                 Log.d(TAG, "signInWithEmail:success")
                                 Toast.makeText(requireContext(), "Login Success.",
                                     Toast.LENGTH_SHORT).show()
-                                findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToHomeFragment())
+                                reload()
+//                                findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToHomeFragment())
                             } else {
                                 // If sign in fails, display a message to the user.
                                 Log.w(TAG, "signInWithEmail:failure", task.exception)

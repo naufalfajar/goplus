@@ -7,14 +7,24 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import id.naufalfajar.go.R
+import id.naufalfajar.go.adapter.GoPlaceAdapter
+import id.naufalfajar.go.adapter.PlaceAdapter
 import id.naufalfajar.go.databinding.FragmentGoPlusBinding
+import id.naufalfajar.go.model.Place
 
 class GoPlusFragment : Fragment() {
     private var _binding: FragmentGoPlusBinding? = null
     private val binding get() = _binding!!
+    private var db = Firebase.firestore
+    private lateinit var placeList: ArrayList<Place>
     private var opened: Boolean = false
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -32,29 +42,43 @@ class GoPlusFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        changeStatusBarColor(true)
         addStop()
+        getData()
         onBack()
         moveToNavigate()
     }
 
-    private fun onBack(){
-        binding.materialToolbar.setNavigationOnClickListener {
-            changeStatusBarColor(false)
-            findNavController().popBackStack()
-        }
+    private fun getData(){
+        placeList = arrayListOf()
+        db = FirebaseFirestore.getInstance()
+        db.collection("place").get()
+            .addOnSuccessListener {
+                if(!it.isEmpty){
+                    for(data in it.documents){
+                        val dataPlace = data.toObject(Place::class.java)
+                        if(dataPlace != null){
+                            placeList.add(dataPlace)
+                        }
+                    }
+                }
+                binding.rvPlace.apply {
+                    adapter = GoPlaceAdapter(placeList)
+                    layoutManager = LinearLayoutManager(requireContext())
+                }
+
+
+            }
+            .addOnCompleteListener {
+                binding.pbRvPlace.visibility = View.GONE
+            }
+            .addOnFailureListener {
+                Toast.makeText(requireContext(), it.toString(), Toast.LENGTH_LONG).show()
+            }
     }
 
-    @SuppressLint("ObsoleteSdkInt")
-    private fun changeStatusBarColor(code: Boolean){
-        if (Build.VERSION.SDK_INT >= 21) {
-            val window = requireActivity().window
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
-            if(code)
-                window.statusBarColor = requireActivity().getColor(R.color.its_white)
-            else
-                window.statusBarColor = requireActivity().getColor(R.color.its_blue)
+    private fun onBack(){
+        binding.materialToolbar.setNavigationOnClickListener {
+            findNavController().popBackStack()
         }
     }
 
@@ -113,7 +137,7 @@ class GoPlusFragment : Fragment() {
 
     private fun moveToNavigate(){
         binding.mbtnGo.setOnClickListener {
-            findNavController().navigate(GoPlusFragmentDirections.actionGoPlusFragmentToNavigationFragment())
+//            findNavController().navigate(GoPlusFragmentDirections.actionGoPlusFragmentToNavigationFragment())
         }
     }
 }

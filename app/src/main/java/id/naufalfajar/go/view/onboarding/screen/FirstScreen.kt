@@ -1,13 +1,20 @@
 package id.naufalfajar.go.view.onboarding.screen
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2
+import id.naufalfajar.go.MainActivity
 import id.naufalfajar.go.R
 import id.naufalfajar.go.databinding.FragmentFirstScreenBinding
+import id.naufalfajar.go.helper.DataStoreManager
+import id.naufalfajar.go.view.RegisterFragmentDirections
+import kotlinx.coroutines.launch
 
 class FirstScreen : Fragment() {
     private var _binding: FragmentFirstScreenBinding? = null

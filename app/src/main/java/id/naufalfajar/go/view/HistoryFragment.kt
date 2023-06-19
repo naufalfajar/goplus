@@ -32,28 +32,13 @@ class HistoryFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        changeStatusBarColor(true)
         onBack()
         moveToGoPlus()
     }
 
     private fun onBack(){
         binding.materialToolbar.setNavigationOnClickListener {
-            changeStatusBarColor(false)
             findNavController().popBackStack()
-        }
-    }
-
-    @SuppressLint("ObsoleteSdkInt")
-    private fun changeStatusBarColor(code: Boolean){
-        if (Build.VERSION.SDK_INT >= 21) {
-            val window = requireActivity().window
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
-            if(code)
-                window.statusBarColor = requireActivity().getColor(R.color.its_white)
-            else
-                window.statusBarColor = requireActivity().getColor(R.color.its_blue)
         }
     }
 
