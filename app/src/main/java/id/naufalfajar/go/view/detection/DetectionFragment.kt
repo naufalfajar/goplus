@@ -5,6 +5,7 @@ import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.os.Bundle
+import android.speech.tts.TextToSpeech
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -35,6 +36,8 @@ class DetectionFragment : Fragment(), ObjectDetectorHelper.DetectorListener {
     private val binding get() = _binding!!
 
     private val TAG = "ObjectDetection"
+    private lateinit var textToSpeechHelper: TextToSpeechHelper
+
 
     private lateinit var objectDetectorHelper: ObjectDetectorHelper
     private lateinit var bitmapBuffer: Bitmap
@@ -78,6 +81,9 @@ class DetectionFragment : Fragment(), ObjectDetectorHelper.DetectorListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         onBack()
+        goBack()
+        textToSpeechHelper = TextToSpeechHelper(requireContext())
+
         when {
             ContextCompat.checkSelfPermission(
                 requireContext(),
@@ -105,12 +111,6 @@ class DetectionFragment : Fragment(), ObjectDetectorHelper.DetectorListener {
 
         // Attach listeners to UI control widgets
         initBottomSheetControls()
-    }
-
-    private fun onBack(){
-        binding.materialToolbar.setNavigationOnClickListener {
-            findNavController().popBackStack()
-        }
     }
 
     private fun initBottomSheetControls(){
@@ -296,6 +296,7 @@ class DetectionFragment : Fragment(), ObjectDetectorHelper.DetectorListener {
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+        textToSpeechHelper.shutdown()
     }
 
     override fun onError(error: String) {
@@ -325,7 +326,30 @@ class DetectionFragment : Fragment(), ObjectDetectorHelper.DetectorListener {
                     )
                     // Force a redraw
                     binding.overlay.invalidate()
+
+                    // Speak the detected objects
+                    results?.let {
+                        val objectsText = StringBuilder()
+                        for (result in it) {
+//                            objectsText.append(result.categories).append(", ")
+                            textToSpeechHelper.speak(result.categories[0].label)
+                        }
+//                        textToSpeechHelper.speak(results)
+                    }
                 }
             }
+    }
+
+    private fun goBack(){
+        binding.btnMap.setOnClickListener {
+            requireActivity().onBackPressedDispatcher.onBackPressed()
+        }
+
+    }
+
+    private fun onBack(){
+        binding.materialToolbar.setNavigationOnClickListener {
+            requireActivity().onBackPressedDispatcher.onBackPressed()
+        }
     }
 }

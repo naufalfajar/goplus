@@ -1,14 +1,13 @@
 package id.naufalfajar.go.view.navigate
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.content.res.Configuration
 import android.content.res.Resources
 import android.location.Location
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.findNavController
@@ -72,16 +71,15 @@ import com.mapbox.navigation.ui.voice.model.SpeechError
 import com.mapbox.navigation.ui.voice.model.SpeechValue
 import com.mapbox.navigation.ui.voice.model.SpeechVolume
 import id.naufalfajar.go.R
-import id.naufalfajar.go.databinding.FragmentNavigationBinding
-//import id.naufalfajar.go.view.DetailPlaceFragmentArgs
-//import id.naufalfajar.go.view.navigate.NavigationFragmentDirections.Companion.actionNavigationFragmentToDetectionFragment
+import id.naufalfajar.go.databinding.ActivityMainBinding
+import id.naufalfajar.go.databinding.ActivityNavigationBinding
+import id.naufalfajar.go.view.detection.DetectionActivity
 import java.util.Date
 import java.util.Locale
 
-class NavigationFragment : Fragment() {
-    private var _binding: FragmentNavigationBinding? = null
+class NavigationActivity : AppCompatActivity() {
+    private var _binding: ActivityNavigationBinding? = null
     private val binding get() = _binding!!
-
     private companion object {
         private const val BUTTON_ANIMATION_DURATION = 1500L
     }
@@ -222,7 +220,7 @@ class NavigationFragment : Fragment() {
         maneuvers.fold(
             { error ->
                 Toast.makeText(
-                    requireContext(),
+                    this,
                     error.errorMessage,
                     Toast.LENGTH_SHORT
                 ).show()
@@ -296,25 +294,9 @@ class NavigationFragment : Fragment() {
         },
         onInitialize = this::initNavigation
     )
-
-    @SuppressLint("MissingPermission")
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        _binding = FragmentNavigationBinding.inflate(layoutInflater)
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-//        _binding = FragmentNavigationBinding.inflate(layoutInflater, container, false)
-        return binding.root
-    }
-
     private fun initNavigation() {
         MapboxNavigationApp.setup(
-            NavigationOptions.Builder(requireContext())
+            NavigationOptions.Builder(this)
                 .accessToken(getString(R.string.mapbox_access_token))
                 // comment out the location engine setting block to disable simulation
 //                .locationEngine(replayLocationEngine)
@@ -326,7 +308,7 @@ class NavigationFragment : Fragment() {
             setLocationProvider(navigationLocationProvider)
             this.locationPuck = LocationPuck2D(
                 bearingImage = ContextCompat.getDrawable(
-                    requireContext(),
+                    this@NavigationActivity,
                     R.drawable.baseline_navigation_24
                 )
             )
@@ -361,7 +343,7 @@ class NavigationFragment : Fragment() {
         mapboxNavigation.requestRoutes(
             RouteOptions.builder()
                 .applyDefaultNavigationOptions()
-                .applyLanguageAndVoiceUnitOptions(requireContext())
+                .applyLanguageAndVoiceUnitOptions(this)
                 .coordinatesList(listOf(originPoint, destination))
                 // provide the bearing for the origin of the request to ensure
                 // that the returned route faces in the direction of the current user movement
@@ -422,13 +404,12 @@ class NavigationFragment : Fragment() {
         binding.routeOverview.visibility = View.INVISIBLE
         binding.tripProgressCard.visibility = View.INVISIBLE
     }
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        _binding = ActivityNavigationBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
         moveToCamera()
-//        val lat = NavigationFragmentArgs.fromBundle(arguments as Bundle).lat
-//        val lng = NavigationFragmentArgs.fromBundle(arguments as Bundle).lng
-        // initialize Navigation Camera
         viewportDataSource = MapboxNavigationViewportDataSource(binding.mapView.getMapboxMap())
         navigationCamera = NavigationCamera(
             binding.mapView.getMapboxMap(),
@@ -463,7 +444,8 @@ class NavigationFragment : Fragment() {
         }
 
         // make sure to use the same DistanceFormatterOptions across different features
-        val distanceFormatterOptions = DistanceFormatterOptions.Builder(requireContext()).locale(Locale.TAIWAN).build()
+        val distanceFormatterOptions = DistanceFormatterOptions.Builder(this).locale(
+            Locale.TAIWAN).build()
 
         // initialize maneuver api that feeds the data to the top banner maneuver view
         maneuverApi = MapboxManeuverApi(
@@ -472,31 +454,31 @@ class NavigationFragment : Fragment() {
 
         // initialize bottom progress view
         tripProgressApi = MapboxTripProgressApi(
-            TripProgressUpdateFormatter.Builder(requireContext())
+            TripProgressUpdateFormatter.Builder(this)
                 .distanceRemainingFormatter(
                     DistanceRemainingFormatter(distanceFormatterOptions)
                 )
                 .timeRemainingFormatter(
-                    TimeRemainingFormatter(requireContext())
+                    TimeRemainingFormatter(this)
                 )
                 .percentRouteTraveledFormatter(
                     PercentDistanceTraveledFormatter()
                 )
                 .estimatedTimeToArrivalFormatter(
-                    EstimatedTimeToArrivalFormatter(requireContext(), TimeFormat.TWENTY_FOUR_HOURS)
+                    EstimatedTimeToArrivalFormatter(this, TimeFormat.TWENTY_FOUR_HOURS)
                 )
                 .build()
         )
 
         // initialize voice instructions api and the voice instruction player
         speechApi = MapboxSpeechApi(
-            requireContext(),
+            this,
             getString(R.string.mapbox_access_token),
             Locale.US.language
         )
         @Suppress("DEPRECATION")
         voiceInstructionsPlayer = MapboxVoiceInstructionsPlayer(
-            requireContext(),
+            this,
             getString(R.string.mapbox_access_token),
             Locale.US.language
         )
@@ -505,14 +487,14 @@ class NavigationFragment : Fragment() {
         // the route line below road labels layer on the map
         // the value of this option will depend on the style that you are using
         // and under which layer the route line should be placed on the map layers stack
-        val mapboxRouteLineOptions = MapboxRouteLineOptions.Builder(requireContext())
+        val mapboxRouteLineOptions = MapboxRouteLineOptions.Builder(this)
             .withRouteLineBelowLayerId("road-label-navigation")
             .build()
         routeLineApi = MapboxRouteLineApi(mapboxRouteLineOptions)
         routeLineView = MapboxRouteLineView(mapboxRouteLineOptions)
 
         // initialize maneuver arrow view to draw arrows on the map
-        val routeArrowOptions = RouteArrowOptions.Builder(requireContext()).build()
+        val routeArrowOptions = RouteArrowOptions.Builder(this).build()
         routeArrowView = MapboxRouteArrowView(routeArrowOptions)
 
         // load map style
@@ -546,7 +528,6 @@ class NavigationFragment : Fragment() {
         binding.soundButton.unmute()
     }
 
-
     override fun onDestroy() {
         super.onDestroy()
         mapboxReplayer.finish()
@@ -560,7 +541,9 @@ class NavigationFragment : Fragment() {
 
     private fun moveToCamera(){
         binding.btnCamera.setOnClickListener {
-//            findNavController().navigate(NavigationFragmentDirections.actionNavigationFragmentToDetectionFragment())
+            val intent = Intent(this, DetectionActivity::class.java)
+            // start your next activity
+            startActivity(intent)
         }
     }
 }

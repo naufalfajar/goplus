@@ -5,16 +5,14 @@ import android.content.pm.PackageManager
 import android.location.Address
 import android.location.Geocoder
 import android.location.Location
-import android.os.Build
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -25,8 +23,6 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import com.mapbox.android.core.permissions.PermissionsListener
-import com.mapbox.android.core.permissions.PermissionsManager
 import id.naufalfajar.go.adapter.PlaceAdapter
 import id.naufalfajar.go.databinding.FragmentHomeBinding
 import id.naufalfajar.go.helper.DataStoreManager
@@ -34,7 +30,6 @@ import id.naufalfajar.go.model.Place
 import kotlinx.coroutines.launch
 import java.io.IOException
 import java.util.Locale
-import kotlin.math.sign
 
 class HomeFragment : Fragment()
 //    , PermissionsListener
@@ -113,6 +108,7 @@ class HomeFragment : Fragment()
         getLastLocation()
     }
 
+    @Suppress("DEPRECATION")
     private fun getLastLocation(){
         if (ContextCompat.checkSelfPermission(
                 requireContext(),
@@ -136,13 +132,12 @@ class HomeFragment : Fragment()
                                 ?.getAddressLine(0)}"
 
                         } catch (e: IOException) {
-                            binding.tvFlexLocation.text = "CATCH"
                             e.printStackTrace()
                         }
                     }
                 })
         } else {
-            binding.tvFlexLocation.text = "GAGAL"
+            binding.tvFlexLocation.text = "Gagal untuk mendapatkan lokasi"
 //            validatePermission()
             askPermission()
         }
@@ -156,6 +151,7 @@ class HomeFragment : Fragment()
         )
     }
 
+    @Suppress("DEPRECATION")
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<String>,

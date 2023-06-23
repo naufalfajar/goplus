@@ -125,4 +125,7 @@ dependencies {
     implementation 'com.mapbox.maps:android:10.13.0'
     //mapbox navigation sdk
     implementation "com.mapbox.navigation:android:2.13.1"
+
+    implementation 'com.android.volley:volley:1.2.1'
+
 }

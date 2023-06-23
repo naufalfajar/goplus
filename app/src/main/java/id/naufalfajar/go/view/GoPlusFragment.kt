@@ -1,6 +1,7 @@
 package id.naufalfajar.go.view
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -19,6 +20,7 @@ import id.naufalfajar.go.adapter.GoPlaceAdapter
 import id.naufalfajar.go.adapter.PlaceAdapter
 import id.naufalfajar.go.databinding.FragmentGoPlusBinding
 import id.naufalfajar.go.model.Place
+import id.naufalfajar.go.view.navigate.NavigationActivity
 
 class GoPlusFragment : Fragment() {
     private var _binding: FragmentGoPlusBinding? = null
@@ -138,6 +140,9 @@ class GoPlusFragment : Fragment() {
     private fun moveToNavigate(){
         binding.mbtnGo.setOnClickListener {
 //            findNavController().navigate(GoPlusFragmentDirections.actionGoPlusFragmentToNavigationFragment())
+            val intent = Intent(requireContext(), NavigationActivity::class.java)
+            // start your next activity
+            startActivity(intent)
         }
     }
 }

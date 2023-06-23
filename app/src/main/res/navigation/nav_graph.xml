@@ -81,9 +81,6 @@
         android:label="fragment_go_plus"
         tools:layout="@layout/fragment_go_plus" >
         <action
-            android:id="@+id/action_goPlusFragment_to_navigationFragment"
-            app:destination="@id/navigationFragment" />
-        <action
             android:id="@+id/action_goPlusFragment_to_detailPlaceFragment"
             app:destination="@id/detailPlaceFragment" />
     </fragment>
@@ -129,9 +126,6 @@
         <argument
             android:name="id"
             app:argType="integer" />
-        <action
-            android:id="@+id/action_detailPlaceFragment_to_navigationFragment"
-            app:destination="@id/navigationFragment" />
     </fragment>
     <fragment
         android:id="@+id/thirdScreen"
