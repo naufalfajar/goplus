@@ -51,7 +51,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/mbtn_continue"
-        android:contentDescription="@string/go_by_its_campus" />
+        android:contentDescription="@string/gambar_eksplor" />
 
 
     <TextView

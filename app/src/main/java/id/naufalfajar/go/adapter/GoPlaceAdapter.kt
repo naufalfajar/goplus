@@ -29,9 +29,12 @@ class GoPlaceAdapter(
         fun bind(item: Place) {
             binding.apply {
                 tvPlaceName.text = item.name
+                tvPlaceName.contentDescription = item.name
+                tvPlaceName.hint = item.name
                 Glide.with(itemView.context)
                     .load(item.image)
                     .into(ivTempat)
+                ivTempat.contentDescription = "Gambar ${item.name}"
                 cvTempat.setOnClickListener {
                     it.findNavController().navigate(
                         GoPlusFragmentDirections.actionGoPlusFragmentToDetailPlaceFragment(

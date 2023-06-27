@@ -1,25 +1,22 @@
 package id.naufalfajar.go.view
 
-import android.annotation.SuppressLint
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.GeoPoint
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import id.naufalfajar.go.R
 import id.naufalfajar.go.adapter.GoPlaceAdapter
-import id.naufalfajar.go.adapter.PlaceAdapter
 import id.naufalfajar.go.databinding.FragmentGoPlusBinding
 import id.naufalfajar.go.model.Place
+import id.naufalfajar.go.view.detection.TextToSpeechHelper
 import id.naufalfajar.go.view.navigate.NavigationActivity
 
 class GoPlusFragment : Fragment() {
@@ -27,7 +24,10 @@ class GoPlusFragment : Fragment() {
     private val binding get() = _binding!!
     private var db = Firebase.firestore
     private lateinit var placeList: ArrayList<Place>
+    private lateinit var placeSearch: MutableMap<String, GeoPoint>
+    private lateinit var textToSpeechHelper: TextToSpeechHelper
     private var opened: Boolean = false
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -40,10 +40,12 @@ class GoPlusFragment : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+        textToSpeechHelper.shutdown()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        textToSpeechHelper = TextToSpeechHelper(requireContext())
         addStop()
         getData()
         onBack()
@@ -52,6 +54,7 @@ class GoPlusFragment : Fragment() {
 
     private fun getData(){
         placeList = arrayListOf()
+        placeSearch = mutableMapOf()
         db = FirebaseFirestore.getInstance()
         db.collection("place").get()
             .addOnSuccessListener {
@@ -60,6 +63,7 @@ class GoPlusFragment : Fragment() {
                         val dataPlace = data.toObject(Place::class.java)
                         if(dataPlace != null){
                             placeList.add(dataPlace)
+                            placeSearch[dataPlace.name!!] = dataPlace.location!!
                         }
                     }
                 }
@@ -67,8 +71,6 @@ class GoPlusFragment : Fragment() {
                     adapter = GoPlaceAdapter(placeList)
                     layoutManager = LinearLayoutManager(requireContext())
                 }
-
-
             }
             .addOnCompleteListener {
                 binding.pbRvPlace.visibility = View.GONE
@@ -139,10 +141,30 @@ class GoPlusFragment : Fragment() {
 
     private fun moveToNavigate(){
         binding.mbtnGo.setOnClickListener {
-//            findNavController().navigate(GoPlusFragmentDirections.actionGoPlusFragmentToNavigationFragment())
-            val intent = Intent(requireContext(), NavigationActivity::class.java)
-            // start your next activity
-            startActivity(intent)
+            val input = binding.etPemberhentian1.text
+            var count = 0
+            var lng : Double = 0.0
+            var lat : Double = 0.0
+            if(placeSearch.isNotEmpty()){
+                for (entry in placeSearch) {
+                    if (entry.key.lowercase().contains(input.toString().lowercase())) {
+                        count += 1
+                        lat = entry.value.latitude
+                        lng = entry.value.longitude
+                    }
+                }
+                if(count == 1){
+                    val intent = Intent(requireContext(), NavigationActivity::class.java)
+                    intent.putExtra("latitude", lat)
+                    intent.putExtra("longitude", lng)
+                    // start your next activity
+                    startActivity(intent)
+                } else {
+                    textToSpeechHelper.speak("Input anda kurang tepat")
+                }
+            }
+//            val intent = Intent(requireContext(), NavigationActivity::class.java)
+//            startActivity(intent)
         }
     }
 }

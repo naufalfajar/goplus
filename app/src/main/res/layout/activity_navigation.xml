@@ -20,7 +20,8 @@
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:layout_gravity="center"
-            android:src="@drawable/baseline_remove_red_eye_24"/>
+            android:src="@drawable/baseline_remove_red_eye_24"
+            android:contentDescription="@string/tombol_deteksi_objek" />
     </androidx.cardview.widget.CardView>
 
     <com.mapbox.maps.MapView
@@ -49,6 +50,7 @@
 
         <ImageView
             android:id="@+id/stop"
+            android:contentDescription="@string/tombol_tutup"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_gravity="end|center_vertical"
@@ -57,6 +59,7 @@
     </androidx.cardview.widget.CardView>
     <com.mapbox.navigation.ui.maneuver.view.MapboxManeuverView
         android:id="@+id/maneuverView"
+        android:contentDescription="@string/daftar_instruksi_arah"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="4dp"
@@ -68,6 +71,7 @@
         android:id="@+id/soundButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:contentDescription="@string/tombol_suara"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
         android:visibility="invisible"
@@ -75,6 +79,7 @@
         app:layout_constraintTop_toBottomOf="@id/maneuverView" />
     <com.mapbox.navigation.ui.maps.camera.view.MapboxRouteOverviewButton
         android:id="@+id/routeOverview"
+        android:contentDescription="@string/tombol_gambaran"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
@@ -84,6 +89,7 @@
         app:layout_constraintTop_toBottomOf="@id/soundButton" />
     <com.mapbox.navigation.ui.maps.camera.view.MapboxRecenterButton
         android:id="@+id/recenter"
+        android:contentDescription="@string/tombol_memusatkan"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"

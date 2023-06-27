@@ -12,7 +12,6 @@ import id.naufalfajar.go.view.HomeFragmentDirections
 class PlaceAdapter(
     private val placeList: ArrayList<Place>
 ): RecyclerView.Adapter<PlaceAdapter.PlaceViewHolder>() {
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlaceViewHolder {
         val binding = ItemPlaceBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return PlaceViewHolder(binding)
@@ -29,9 +28,13 @@ class PlaceAdapter(
         fun bind(item: Place) {
             binding.apply {
                 tvPlaceName.text = item.name
+                tvPlaceName.contentDescription = item.name
+                tvPlaceName.hint = item.name
                 Glide.with(itemView.context)
                     .load(item.image)
                     .into(ivTempat)
+                ivTempat.contentDescription = "Gambar ${item.name}"
+
                 cvTempat.setOnClickListener {
                     it.findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToDetailPlaceFragment(
                         item.id!!

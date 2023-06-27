@@ -5,12 +5,11 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.content.res.Resources
 import android.location.Location
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.navigation.fragment.findNavController
 import com.mapbox.api.directions.v5.models.Bearing
 import com.mapbox.api.directions.v5.models.RouteOptions
 import com.mapbox.bindgen.Expected
@@ -18,7 +17,6 @@ import com.mapbox.geojson.Point
 import com.mapbox.maps.EdgeInsets
 import com.mapbox.maps.plugin.LocationPuck2D
 import com.mapbox.maps.plugin.animation.camera
-import com.mapbox.maps.plugin.gestures.gestures
 import com.mapbox.maps.plugin.locationcomponent.location
 import com.mapbox.navigation.base.TimeFormat
 import com.mapbox.navigation.base.extensions.applyDefaultNavigationOptions
@@ -71,11 +69,10 @@ import com.mapbox.navigation.ui.voice.model.SpeechError
 import com.mapbox.navigation.ui.voice.model.SpeechValue
 import com.mapbox.navigation.ui.voice.model.SpeechVolume
 import id.naufalfajar.go.R
-import id.naufalfajar.go.databinding.ActivityMainBinding
 import id.naufalfajar.go.databinding.ActivityNavigationBinding
 import id.naufalfajar.go.view.detection.DetectionActivity
-import java.util.Date
 import java.util.Locale
+
 
 class NavigationActivity : AppCompatActivity() {
     private var _binding: ActivityNavigationBinding? = null
@@ -85,7 +82,7 @@ class NavigationActivity : AppCompatActivity() {
     }
 
     private val mapboxReplayer = MapboxReplayer()
-    private val replayLocationEngine = ReplayLocationEngine(mapboxReplayer)
+//    private val replayLocationEngine = ReplayLocationEngine(mapboxReplayer)
     private val replayProgressObserver = ReplayProgressObserver(mapboxReplayer)
     private lateinit var navigationCamera: NavigationCamera
     private lateinit var viewportDataSource: MapboxNavigationViewportDataSource
@@ -298,7 +295,6 @@ class NavigationActivity : AppCompatActivity() {
         MapboxNavigationApp.setup(
             NavigationOptions.Builder(this)
                 .accessToken(getString(R.string.mapbox_access_token))
-                // comment out the location engine setting block to disable simulation
 //                .locationEngine(replayLocationEngine)
                 .build()
         )
@@ -309,24 +305,11 @@ class NavigationActivity : AppCompatActivity() {
             this.locationPuck = LocationPuck2D(
                 bearingImage = ContextCompat.getDrawable(
                     this@NavigationActivity,
-                    R.drawable.baseline_navigation_24
+                    R.drawable.ic_location_puck
                 )
             )
             enabled = true
         }
-        replayOriginLocation()
-    }
-    private fun replayOriginLocation() {
-        mapboxReplayer.pushEvents(
-            listOf(
-                ReplayRouteMapper.mapToUpdateLocation(
-                    Date().time.toDouble(),
-                    Point.fromLngLat(-122.39726512303575, 37.785128345296805)
-                )
-            )
-        )
-        mapboxReplayer.playFirstLocation()
-        mapboxReplayer.playbackSpeed(3.0)
     }
 
     private fun findRoute(destination: Point) {
@@ -497,14 +480,14 @@ class NavigationActivity : AppCompatActivity() {
         val routeArrowOptions = RouteArrowOptions.Builder(this).build()
         routeArrowView = MapboxRouteArrowView(routeArrowOptions)
 
-        // load map style
-        binding.mapView.getMapboxMap().loadStyleUri(NavigationStyles.NAVIGATION_DAY_STYLE) {
-            // add long click listener that search for a route to the clicked destination
-            binding.mapView.gestures.addOnMapLongClickListener { point ->
-                findRoute(point)
-                true
+
+        binding.mapView.getMapboxMap().loadStyleUri(NavigationStyles.NAVIGATION_DAY_STYLE){
+            val extras = intent.extras
+            if (extras != null) {
+                val lat = extras.getDouble("latitude", 0.0)
+                val lng = extras.getDouble("longitude", 0.0)
+                findRoute(Point.fromLngLat(lng, lat))
             }
-//            findRoute(Point.fromLngLat(lat,lng))
         }
 
         // initialize view interactions
@@ -546,4 +529,5 @@ class NavigationActivity : AppCompatActivity() {
             startActivity(intent)
         }
     }
+
 }

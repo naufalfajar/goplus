@@ -40,7 +40,6 @@ class HomeFragment : Fragment()
     private lateinit var placeList: ArrayList<Place>
 //    private val permissionsManager = PermissionsManager(this)
     private lateinit var preferenceManager: DataStoreManager
-
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
     companion object {
@@ -79,8 +78,6 @@ class HomeFragment : Fragment()
                     adapter = PlaceAdapter(placeList)
                     layoutManager =LinearLayoutManager(requireContext())
                 }
-
-
             }
             .addOnCompleteListener {
                 binding.pbRvPlace.visibility = View.GONE
@@ -103,6 +100,7 @@ class HomeFragment : Fragment()
         moveToGoPlus()
         moveToHistory()
         moveToSchedule()
+        moveToSettings()
         signOut()
         setFirstTimetoFalse()
         getLastLocation()
@@ -174,6 +172,8 @@ class HomeFragment : Fragment()
         }
     }
 
+
+
 //    private fun validatePermission(){
 //        if (PermissionsManager.areLocationPermissionsGranted(requireContext())) {
 //            requestOptionalPermissions()
@@ -238,13 +238,16 @@ class HomeFragment : Fragment()
         val user = Firebase.auth.currentUser
         if(user==null)
             Toast.makeText(requireContext(), "getdata", Toast.LENGTH_SHORT).show()
-        else{
+        else if (user.displayName.isNullOrBlank()){
             val email = user.email
             var nama = ""
             val index = email?.indexOf("@")
             if (index != -1) {
                 nama = email?.substring(0, index!!)!!
             }
+            binding.namaemail.text = "Halo $nama. Ready to GO?"
+        } else {
+            var nama = user.displayName
             binding.namaemail.text = "Halo $nama. Ready to GO?"
         }
     }
@@ -269,9 +272,14 @@ class HomeFragment : Fragment()
 
     private fun signOut(){
         binding.mbtnLogout.setOnClickListener {
-//            getLastLocation()
             Firebase.auth.signOut()
             findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToLoginFragment())
+        }
+    }
+
+    private fun moveToSettings(){
+        binding.ivMenuHamburger.setOnClickListener {
+            findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToSettingsFragment())
         }
     }
 }

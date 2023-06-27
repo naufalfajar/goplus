@@ -5,6 +5,7 @@ import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.os.Bundle
+import android.os.Handler
 import android.speech.tts.TextToSpeech
 import android.util.Log
 import android.view.LayoutInflater
@@ -30,7 +31,8 @@ import java.util.LinkedList
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
-private val PERMISSIONS_REQUIRED = arrayOf(Manifest.permission.CAMERA)
+private var handler: Handler? = null
+private var runnable: Runnable? = null
 class DetectionFragment : Fragment(), ObjectDetectorHelper.DetectorListener {
     private var _binding: FragmentDetectionBinding? = null
     private val binding get() = _binding!!
@@ -84,11 +86,11 @@ class DetectionFragment : Fragment(), ObjectDetectorHelper.DetectorListener {
         goBack()
         textToSpeechHelper = TextToSpeechHelper(requireContext())
 
-        when {
+        when (PackageManager.PERMISSION_GRANTED) {
             ContextCompat.checkSelfPermission(
                 requireContext(),
                 Manifest.permission.CAMERA
-            ) == PackageManager.PERMISSION_GRANTED -> {
+            ) -> {
 
             }
             else -> {
@@ -316,7 +318,7 @@ class DetectionFragment : Fragment(), ObjectDetectorHelper.DetectorListener {
             activity?.runOnUiThread {
                 if (_binding != null) {
                     binding.bottomSheetLayout.inferenceTimeVal.text =
-                        String.format("%d ms", inferenceTime)
+                        String.format("%d ms$", inferenceTime)
 
                     // Pass necessary information to OverlayView for drawing on the canvas
                     binding.overlay.setResults(
@@ -327,17 +329,38 @@ class DetectionFragment : Fragment(), ObjectDetectorHelper.DetectorListener {
                     // Force a redraw
                     binding.overlay.invalidate()
 
-                    // Speak the detected objects
                     results?.let {
-                        val objectsText = StringBuilder()
-                        for (result in it) {
-//                            objectsText.append(result.categories).append(", ")
-                            textToSpeechHelper.speak(result.categories[0].label)
+                        val halfCameraViewArea = (imageWidth * imageHeight) / 2
+
+                        for (result in results) {
+//                            val boundingBox = result.boundingBox
+//
+//                            val boundingBoxWidth = boundingBox.right - boundingBox.left
+//                            val boundingBoxHeight = boundingBox.bottom - boundingBox.top
+//                            val boundingBoxArea = boundingBoxWidth * boundingBoxHeight
+
+//                            if (boundingBoxArea > halfCameraViewArea) {
+                                // Objek memiliki luas bounding box lebih besar dari setengah tampilan kamera
+                                // Lakukan tindakan yang diinginkan, seperti memunculkan suara
+//                                textToSpeechHelper.speak(result.categories[0].label)
+                                val label = result.categories[0].label
+                                playSoundWithDelay(label)
+//                            }
                         }
-//                        textToSpeechHelper.speak(results)
                     }
                 }
             }
+    }
+
+    @Suppress("DEPRECATION")
+    private fun playSoundWithDelay(label: String) {
+        handler?.removeCallbacksAndMessages(null) // Hapus pengulangan yang tertunda sebelumnya (jika ada)
+
+        handler = Handler()
+        handler?.postDelayed({
+            // Jalankan kode suara di sini
+            textToSpeechHelper.speak(label)
+        }, 1000) // Jeda waktu 2 detik sebelum menjalankan suara
     }
 
     private fun goBack(){

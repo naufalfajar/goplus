@@ -18,6 +18,7 @@
             android:id="@+id/material_toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
+            app:navigationContentDescription="Kembali"
             app:navigationIcon="@drawable/baseline_arrow_back_ios_24"
             app:navigationIconTint="@color/its_blue"
             app:menu="@menu/top_app_bar_schedule"

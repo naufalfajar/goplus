@@ -67,6 +67,34 @@
     <string name="name">name</string>
     <string name="eksplor">Eksplor</string>
     <string name="semoga_anda_dapat_membantu_teman_teman_disabilitas_dengan_aplikasi_ini_cheers">Semoga, anda dapat membantu teman teman disabilitas dengan aplikasi ini. cheers 👋👋</string>
+    <string name="dari_lokasi_anda_saat_ini">Dari Lokasi Anda saat ini</string>
+    <string name="tombol_deteksi_objek">Tombol deteksi objek</string>
+    <string name="tombol_tutup">Tombol tutup</string>
+    <string name="tombol_suara">Tombol Suara</string>
+    <string name="gambar_terima_kasih">Gambar Terima Kasih</string>
+    <string name="gambar_eksplor">Gambar Eksplor</string>
+    <string name="nama_pengguna">Nama Pengguna</string>
+    <string name="kembali_navigasi">Kembali Navigasi</string>
+    <string name="pengguna">Pengguna</string>
+    <string name="informasi_personal">Informasi Personal</string>
+    <string name="pada_laman_ini_anda_dapat_menyunting_informasi_umum_personal_berupa_nama_dan_email">Pada laman ini, anda dapat menyunting informasi umum personal berupa nama dan email.</string>
+    <string name="nama">Nama</string>
+    <string name="password_lama">Password Lama</string>
+    <string name="konfirmasi_password_baru">Konfirmasi Password Baru</string>
+    <string name="password_baru">Password Baru</string>
+    <string name="ubah_data_personal">Ubah Data Personal</string>
+    <string name="ubah_password">Ubah Password</string>
+    <string name="informasi_pribadi">Informasi Pribadi</string>
+    <string name="pada_laman_ini_anda_dapat_menyunting_password_yang_anda_gunakan_masuk_ke_aplikasi_ini">Pada laman ini, anda dapat menyunting password yang anda gunakan masuk ke aplikasi ini</string>
+    <string name="data_personal_telah_diubah">Data personal telah diubah</string>
+    <string name="apakah_anda_yakin_untuk_merubah_data_personal_anda">Apakah anda yakin untuk merubah data personal anda?</string>
+    <string name="password_telah_diubah">Password telah diubah</string>
+    <string name="apakah_anda_yakin_untuk_mengubah_password_anda">Apakah anda yakin untuk mengubah password anda?</string>
+    <string name="gambar_map">Gambar Map</string>
+    <string name="daftar_instruksi_arah">Daftar Instruksi Arah</string>
+    <string name="tombol_gambaran">Tombol Gambaran</string>
+    <string name="tombol_memusatkan">Tombol Memusatkan</string>
+    <string name="menu_pengaturam">Menu Pengaturam</string>
 
     <string-array name="delegate_spinner_titles">
         <item>CPU</item>
