@@ -367,7 +367,6 @@ class DetectionFragment : Fragment(), ObjectDetectorHelper.DetectorListener {
         binding.btnMap.setOnClickListener {
             requireActivity().onBackPressedDispatcher.onBackPressed()
         }
-
     }
 
     private fun onBack(){

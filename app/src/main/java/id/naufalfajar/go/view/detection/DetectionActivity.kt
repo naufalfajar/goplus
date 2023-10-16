@@ -3,9 +3,7 @@ package id.naufalfajar.go.view.detection
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import id.naufalfajar.go.R
 import id.naufalfajar.go.databinding.ActivityDetectionBinding
-import id.naufalfajar.go.databinding.ActivityMainBinding
 
 class DetectionActivity : AppCompatActivity() {
     private var _binding: ActivityDetectionBinding? = null
