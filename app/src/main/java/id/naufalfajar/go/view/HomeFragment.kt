@@ -1,50 +1,50 @@
 package id.naufalfajar.go.view
 
 import android.Manifest
+import android.app.AlertDialog
+import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
-import android.location.Address
-import android.location.Geocoder
+import android.location.LocationManager
 import android.os.Bundle
+import android.provider.Settings
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.app.ActivityCompat
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
 import id.naufalfajar.go.R
 import id.naufalfajar.go.adapter.PlaceAdapter
 import id.naufalfajar.go.databinding.FragmentHomeBinding
 import id.naufalfajar.go.helper.DataStoreManager
-import id.naufalfajar.go.model.Place
-import kotlinx.coroutines.Dispatchers
+import id.naufalfajar.go.view.viewmodel.HomeViewModel
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
-import kotlinx.coroutines.withContext
-import java.io.IOException
-import java.util.Locale
 
 class HomeFragment : Fragment()
 {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
-    private lateinit var placeList: ArrayList<Place>
     private lateinit var preferenceManager: DataStoreManager
-    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
-    private lateinit var db: FirebaseFirestore
+    private val viewModel: HomeViewModel by viewModels()
 
-    companion object {
-        private const val REQUEST_CODE = 100
-    }
+    // Membuat instance ActivityResultLauncher untuk menangani hasil permintaan izin
+    private val requestPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
+            if (isGranted) {
+                viewModel.fetchLocation()
+            } else {
+                Toast.makeText(requireContext(), "Akses Lokasi Ditolak", Toast.LENGTH_SHORT).show()
+            }
+        }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -55,110 +55,39 @@ class HomeFragment : Fragment()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        fusedLocationProviderClient =
-            LocationServices.getFusedLocationProviderClient(requireActivity())
         preferenceManager = DataStoreManager(requireContext())
-        db = Firebase.firestore
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        getData()
-        getUsername()
+        setFirstTimetoFalse()
+
+        checkPermission()
+        setupData()
+        searchFilterQuery()
+
+        observePermissionDenied()
+        observeLocation()
+        observeLoadingState()
+        observeUsername()
+        observePlaces()
+        observeErrorMessages()
+
         moveToGoPlus()
         moveToHistory()
         moveToSchedule()
         moveToSettings()
-        setFirstTimetoFalse()
-        getLastLocation()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        binding.etSearch.text.clear()
+        checkGPSAndRequestToEnable()
     }
 
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
-    }
-
-    private fun getData(){
-        placeList = arrayListOf()
-        binding.pbRvPlace.visibility = View.VISIBLE
-        lifecycleScope.launch {
-            try {
-                val querySnapshot = withContext(Dispatchers.IO) {
-                    db.collection("place").get().await()
-                }
-
-                for (data in querySnapshot.documents) {
-                    val dataPlace = data.toObject(Place::class.java)
-                    dataPlace?.let { placeList.add(it) }
-                }
-
-                binding.rvPlace.apply {
-                    adapter = PlaceAdapter(placeList)
-                    layoutManager = LinearLayoutManager(requireContext())
-                }
-            } catch (e: Exception) {
-                Toast.makeText(requireContext(), e.toString(), Toast.LENGTH_LONG).show()
-            } finally {
-                binding.pbRvPlace.visibility = View.GONE
-            }
-        }
-    }
-
-    @Suppress("DEPRECATION")
-    private fun getLastLocation() {
-        if (ContextCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED
-        ) {
-            lifecycleScope.launch {
-                try {
-                    val location = fusedLocationProviderClient.lastLocation.await()
-                    if (location != null) {
-                        val geocoder = Geocoder(requireContext(), Locale.getDefault())
-                        val addresses: List<Address>?
-                        try {
-                            addresses = geocoder.getFromLocation(location.latitude, location.longitude, 1)
-                            val address = addresses?.getOrNull(0)?.getAddressLine(0) ?: "Lokasi tidak ditemukan"
-                            binding.tvFlexLocation.text = address
-                        } catch (e: IOException) {
-                            e.printStackTrace()
-                        }
-                    }
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                    binding.tvFlexLocation.text = resources.getString(R.string.gagal_lokasi_saat_ini)
-                }
-            }
-        } else {
-            binding.tvFlexLocation.text = resources.getString(R.string.gagal_lokasi_saat_ini)
-            askPermission()
-        }
-    }
-
-    private fun askPermission() {
-        ActivityCompat.requestPermissions(
-            requireActivity(),
-            arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-            REQUEST_CODE
-        )
-    }
-
-    @Suppress("DEPRECATION")
-    @Deprecated("Deprecated in Java")
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<String>,
-        grantResults: IntArray
-    ) {
-        if (requestCode == REQUEST_CODE) {
-            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                getLastLocation()
-            } else {
-                Toast.makeText(requireContext(), "Izin diperlukan", Toast.LENGTH_SHORT).show()
-            }
-        }
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 
     private fun setFirstTimetoFalse(){
@@ -168,21 +97,101 @@ class HomeFragment : Fragment()
         }
     }
 
-    private fun getUsername(){
-        val user = Firebase.auth.currentUser
-        if(user==null)
-            Toast.makeText(requireContext(), "getdata", Toast.LENGTH_SHORT).show()
-        else if (user.displayName.isNullOrBlank()){
-            val email = user.email
-            var nama = ""
-            val index = email?.indexOf("@")
-            if (index != -1) {
-                nama = email?.substring(0, index!!)!!
+    private fun checkPermission(){
+        // Cek permission
+        when (PackageManager.PERMISSION_GRANTED) {
+            ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) -> {
+                // Jika permission sudah diberikan, kita akan melanjutkan untuk mendapatkan lokasi
+                viewModel.fetchLocation()
             }
-            binding.namaemail.text = resources.getString(R.string.home_greetings, nama)
-        } else {
-            val nama = user.displayName
-            binding.namaemail.text = resources.getString(R.string.home_greetings, nama)
+            else -> {
+                // Jika permission belum diberikan, kita akan meminta permission kepada pengguna
+                requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+            }
+        }
+    }
+
+    private fun checkGPSAndRequestToEnable() {
+        val locationManager = requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            AlertDialog.Builder(requireContext())
+                .setMessage("GPS belum aktif. Aktifkan GPS untuk melanjutkan.")
+                .setPositiveButton("Aktifkan GPS") { _, _ ->
+                    val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+                    startActivity(intent)
+                }
+                .setNegativeButton("Batal") { dialog, _ ->
+                    dialog.dismiss()
+                }
+                .create()
+                .show()
+        }
+    }
+
+    private fun setupData(){
+        // Ambil username saat view dibuat
+        viewModel.getUsername()
+        // Mengambil data places dari Firestore
+        viewModel.fetchPlaces()
+    }
+
+    private fun searchFilterQuery(){
+        binding.etSearch.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
+                // Implement jika diperlukan
+            }
+
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+                // Update query pencarian setiap kali teks berubah
+                viewModel.updateSearchQuery(s.toString())
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+                // Implement jika diperlukan
+            }
+        })
+    }
+
+    private fun observePermissionDenied(){
+        // Observasi pesan kesalahan
+        viewModel.errorMessage.observe(viewLifecycleOwner) { message ->
+            Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show()
+        }
+    }
+
+    private fun observeLocation() {
+        viewModel.location.observe(viewLifecycleOwner) { location ->
+            binding.tvFlexLocation.text = location
+        }
+    }
+
+    private fun observeLoadingState() {
+        viewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
+            binding.pbRvPlace.visibility = if (isLoading) View.VISIBLE else View.GONE
+        }
+    }
+
+    private fun observeUsername() {
+        viewModel.username.observe(viewLifecycleOwner) { username ->
+            binding.namaemail.text = resources.getString(R.string.home_greetings, username)
+        }
+    }
+
+    private fun observePlaces() {
+        viewModel.filteredPlaces.observe(viewLifecycleOwner) { filteredPlaces ->
+            val adapter = PlaceAdapter(ArrayList(filteredPlaces))
+            binding.rvPlace.adapter = adapter
+            binding.rvPlace.layoutManager = LinearLayoutManager(requireContext())
+        }
+    }
+
+    private fun observeErrorMessages(){
+        // Observasi pesan kesalahan
+        viewModel.errorMessage.observe(viewLifecycleOwner) { message ->
+            Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show()
         }
     }
 
