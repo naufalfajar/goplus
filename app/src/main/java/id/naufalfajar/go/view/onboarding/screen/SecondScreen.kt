@@ -32,14 +32,14 @@ class SecondScreen : Fragment() {
                 val intent = Intent (it, MainActivity::class.java)
                 it.startActivity(intent)
             }
-            activity?.finish()
+//            activity?.finish()
         }
         binding.mbtnRegister.setOnClickListener {
             activity?.let{
                 val intent = Intent (it, MainActivity::class.java)
                 it.startActivity(intent)
             }
-            activity?.finish()
+//            activity?.finish()
         }
     }
 }
