@@ -9,8 +9,11 @@ import android.app.TimePickerDialog
 import android.content.Context
 import android.content.Context.NOTIFICATION_SERVICE
 import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -58,6 +61,7 @@ class ScheduleAddFragment : Fragment() {
         timePicker()
         createNotificationChannel()
         saveSchedule()
+
     }
 
     override fun onDestroy() {
@@ -103,39 +107,44 @@ class ScheduleAddFragment : Fragment() {
 
     private fun createNotificationChannel()
     {
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
-            val name = "Notif Channel"
-            val desc = "A Description of the Channel"
-            val importance = NotificationManager.IMPORTANCE_DEFAULT
-            val channel = NotificationChannel(channelID, name, importance)
-            channel.description = desc
-            val notificationManager = requireActivity().applicationContext.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-            notificationManager.createNotificationChannel(channel)
-//        }
+        val name = "Notif Channel"
+        val desc = "A Description of the Channel"
+        val importance = NotificationManager.IMPORTANCE_DEFAULT
+        val channel = NotificationChannel(channelID, name, importance)
+        channel.description = desc
+        val notificationManager = requireActivity().applicationContext.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.createNotificationChannel(channel)
     }
-    private fun scheduleNotification()
-    {
-        val intent = Intent(requireActivity().applicationContext, Notification::class.java)
-        val title = "Anda mempunyai jadwal perjalanan"
-        val message = "Perjalanan ke ${binding.etPlace.text}"
-        intent.putExtra(titleExtra, title)
-        intent.putExtra(messageExtra, message)
+    private fun scheduleNotification() {
+        try {
+            Log.d("Schedule", "Scheduling notification...")
+            val intent = Intent(requireActivity().applicationContext, Notification::class.java)
+            intent.action = "id.naufalfajar.go.NOTIFY"  // Tambahkan baris ini
+            val title = "Anda mempunyai jadwal perjalanan"
+            val message = "Perjalanan ke ${binding.etPlace.text}"
+            intent.putExtra(titleExtra, title)
+            intent.putExtra(messageExtra, message)
 
-        val pendingIntent = PendingIntent.getBroadcast(
-            requireActivity().applicationContext,
-            notificationID,
-            intent,
-            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
-        )
+            val pendingIntent = PendingIntent.getBroadcast(
+                requireActivity().applicationContext,
+                notificationID,
+                intent,
+                PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+            )
 
-        val time = getDateTimeInMillis()
-        val alarmManager = requireActivity().applicationContext.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        alarmManager.setExactAndAllowWhileIdle(
-            AlarmManager.RTC_WAKEUP,
-            time,
-            pendingIntent
-        )
+            val time = getDateTimeInMillis()
+            val alarmManager = requireActivity().applicationContext.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+            alarmManager.setExactAndAllowWhileIdle(
+                AlarmManager.RTC_WAKEUP,
+                time,
+                pendingIntent
+            )
+        } catch (e: SecurityException) {
+            // Tampilkan pesan error atau informasi ke pengguna
+            Toast.makeText(requireContext(), "Izin diperlukan untuk mengatur pengingat", Toast.LENGTH_SHORT).show()
+        }
     }
+
     private fun getTimeInMillisFromDateTime(date: String, time: String): Long {
         val dateTimeString = "$date $time"
         val dateTimeFormat = SimpleDateFormat("EEEE, dd MMMM yyyy HH:mm", Locale.getDefault())
@@ -153,20 +162,27 @@ class ScheduleAddFragment : Fragment() {
 
     private fun saveSchedule(){
         binding.mbtnSave.setOnClickListener {
-//            val location = binding.etPlace.text.toString()
-//            val dateTime = "${binding.etDate.text} ${binding.etTime.text}"
-//            val reminder = Schedule(location, dateTime)
-
             if(validateEditTexts()){
-                scheduleNotification()
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    val alarmManager = requireActivity().applicationContext.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+                    if (!alarmManager.canScheduleExactAlarms()) {
+                        val intent = Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM)
+                        intent.data = Uri.parse("package:${requireContext().packageName}")
+                        startActivity(intent)
+                    } else {
+                        scheduleNotification()
+                    }
+                } else {
+                    scheduleNotification()
+                }
                 Toast.makeText(requireContext(), "Berhasil Set Pengingat", Toast.LENGTH_SHORT).show()
                 findNavController().popBackStack()
             } else {
                 Toast.makeText(requireContext(), "Gagal", Toast.LENGTH_SHORT).show()
             }
-
         }
     }
+
 
     private fun validateEditTexts(): Boolean {
         val etPlace = binding.etPlace
