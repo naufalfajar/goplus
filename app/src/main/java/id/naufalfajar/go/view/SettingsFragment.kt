@@ -12,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import android.widget.Toast
+import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.button.MaterialButton
 import com.google.firebase.auth.ktx.auth
@@ -26,7 +27,7 @@ class SettingsFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
         _binding = FragmentSettingsBinding.inflate(layoutInflater, container, false)
         return binding.root
@@ -42,6 +43,7 @@ class SettingsFragment : Fragment() {
         changeProfile()
         changePassword()
         goBack()
+        signOut()
     }
 
     private fun changeProfile(){
@@ -134,6 +136,17 @@ class SettingsFragment : Fragment() {
                     Log.d(TAG, "User password updated.")
                 }
             }
+    }
+
+    private fun signOut(){
+        binding.mbtnLogout.setOnClickListener {
+            Firebase.auth.signOut()
+            val action = SettingsFragmentDirections.actionSettingsFragmentToLoginFragment()
+            val navOptions = NavOptions.Builder()
+                .setPopUpTo(R.id.homeFragment, true) // ID dari home fragment atau initial destination
+                .build()
+            findNavController().navigate(action, navOptions)
+        }
     }
 
     private fun goBack(){
