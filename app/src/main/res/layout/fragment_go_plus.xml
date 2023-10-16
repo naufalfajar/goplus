@@ -36,17 +36,6 @@
         app:layout_constraintTop_toBottomOf="@id/top_app_bar"
         app:layout_constraintStart_toStartOf="parent">
 
-        <TextView
-            android:id="@+id/tv_tambah_pemberhentian"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Tambah pemberhentian"
-            android:textSize="11sp"
-            android:textStyle="bold"
-            android:textColor="@color/its_blue"
-            app:layout_constraintEnd_toEndOf="@id/et_start"
-            app:layout_constraintTop_toTopOf="parent"/>
-
         <ImageView
             android:id="@+id/dot_location_start"
             android:layout_width="wrap_content"
@@ -78,7 +67,7 @@
             android:gravity="bottom"
             app:layout_constraintStart_toEndOf="@id/dot_location_start"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_tambah_pemberhentian"
+            app:layout_constraintTop_toTopOf="parent"
             tools:ignore="RtlSymmetry" />
 
         <ImageView
