@@ -5,8 +5,6 @@ import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.os.Bundle
-import android.os.Handler
-import android.speech.tts.TextToSpeech
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -23,23 +21,19 @@ import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.findNavController
-import id.naufalfajar.go.MainActivity
 import id.naufalfajar.go.databinding.FragmentDetectionBinding
 import org.tensorflow.lite.task.vision.detector.Detection
 import java.util.LinkedList
+import java.util.Queue
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
-private var handler: Handler? = null
-private var runnable: Runnable? = null
 class DetectionFragment : Fragment(), ObjectDetectorHelper.DetectorListener {
     private var _binding: FragmentDetectionBinding? = null
     private val binding get() = _binding!!
 
     private val TAG = "ObjectDetection"
     private lateinit var textToSpeechHelper: TextToSpeechHelper
-
 
     private lateinit var objectDetectorHelper: ObjectDetectorHelper
     private lateinit var bitmapBuffer: Bitmap
@@ -51,7 +45,9 @@ class DetectionFragment : Fragment(), ObjectDetectorHelper.DetectorListener {
     /** Blocking camera operations are performed using this executor */
     private lateinit var cameraExecutor: ExecutorService
 
-
+    private val MAX_QUEUE_SIZE = 3 // Ubah sesuai kebutuhan
+    private var FRAME_COUNTER = 1
+    private val detectionQueue: Queue<String> = LinkedList()
 
     private val requestPermissionLauncher =
         registerForActivityResult(
@@ -330,37 +326,34 @@ class DetectionFragment : Fragment(), ObjectDetectorHelper.DetectorListener {
                     binding.overlay.invalidate()
 
                     results?.let {
-                        val halfCameraViewArea = (imageWidth * imageHeight) / 2
 
                         for (result in results) {
-//                            val boundingBox = result.boundingBox
-//
-//                            val boundingBoxWidth = boundingBox.right - boundingBox.left
-//                            val boundingBoxHeight = boundingBox.bottom - boundingBox.top
-//                            val boundingBoxArea = boundingBoxWidth * boundingBoxHeight
-
-//                            if (boundingBoxArea > halfCameraViewArea) {
-                                // Objek memiliki luas bounding box lebih besar dari setengah tampilan kamera
-                                // Lakukan tindakan yang diinginkan, seperti memunculkan suara
-//                                textToSpeechHelper.speak(result.categories[0].label)
-                                val label = result.categories[0].label
-                                playSoundWithDelay(label)
-//                            }
+                            for(category in result.categories){
+                                if(detectionQueue.size < MAX_QUEUE_SIZE){
+                                    val label = category.label
+                                    if(!detectionQueue.contains(label)){
+                                        detectionQueue.add(label)
+                                    }
+                                }
+                            }
                         }
+                    }
+                    if(FRAME_COUNTER % 3 == 0){
+                        Log.d("ANJAY", detectionQueue.toString())
+                        FRAME_COUNTER = 0
+                    }
+                    FRAME_COUNTER++
+
+                    // Memainkan suara objek pertama dalam antrian jika tidak sedang memainkan suara lain
+                    if (!textToSpeechHelper.isSpeaking() && detectionQueue.isNotEmpty()) {
+                        detectionQueue.poll()?.let { playSound(it) } // Mengambil dan menghapus item dari antrian
                     }
                 }
             }
     }
 
-    @Suppress("DEPRECATION")
-    private fun playSoundWithDelay(label: String) {
-        handler?.removeCallbacksAndMessages(null) // Hapus pengulangan yang tertunda sebelumnya (jika ada)
-
-        handler = Handler()
-        handler?.postDelayed({
-            // Jalankan kode suara di sini
-            textToSpeechHelper.speak(label)
-        }, 1000) // Jeda waktu 2 detik sebelum menjalankan suara
+    private fun playSound(text: String){
+        textToSpeechHelper.speak(text)
     }
 
     private fun goBack(){

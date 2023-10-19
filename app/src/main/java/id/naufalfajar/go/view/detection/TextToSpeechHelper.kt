@@ -6,11 +6,7 @@ import android.util.Log
 import java.util.Locale
 
 class TextToSpeechHelper(private val context: Context) : TextToSpeech.OnInitListener {
-    private lateinit var tts: TextToSpeech
-
-    init {
-        tts = TextToSpeech(context, this)
-    }
+    private var tts: TextToSpeech = TextToSpeech(context, this)
 
     override fun onInit(status: Int) {
         if (status == TextToSpeech.SUCCESS) {
@@ -25,6 +21,10 @@ class TextToSpeechHelper(private val context: Context) : TextToSpeech.OnInitList
 
     fun speak(text: String) {
         tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, null)
+    }
+
+    fun isSpeaking(): Boolean {
+        return tts.isSpeaking
     }
 
     fun shutdown() {
